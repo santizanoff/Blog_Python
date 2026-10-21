@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .models import Post
+
 
 def inicio(request):
     """Vista para la página de inicio del blog."""
@@ -8,6 +10,7 @@ def inicio(request):
         'descripcion_proyecto': 'Un proyecto creado para aprender y dominar el desarrollo web con Python y Django, evolucionando desde un prototipo en consola hacia una plataforma moderna.',
     }
     return render(request, 'posts/inicio.html', contexto)
+
 
 def acerca(request):
     """Vista para la página Acerca de."""
@@ -19,9 +22,12 @@ def acerca(request):
     }
     return render(request, 'posts/acerca.html', contexto)
 
+
 def lista_posts(request):
-    """Vista para mostrar publicaciones del blog."""
+    """Vista para mostrar publicaciones publicadas del blog desde la base de datos."""
+    posts = Post.objects.filter(estado='publicado').order_by('-fecha_creacion')
     contexto = {
-        'titulo_pagina': 'Lista de Posts',
+        'titulo_pagina': 'Publicaciones - Blog Consola',
+        'posts': posts,
     }
     return render(request, 'posts/lista_posts.html', contexto)

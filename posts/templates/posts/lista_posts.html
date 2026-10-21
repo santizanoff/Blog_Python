@@ -7,24 +7,30 @@
     <span class="badge">Publicaciones</span>
     <h1>Artículos del Blog</h1>
     <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0 auto;">
-        Publicaciones iniciales cargadas mediante la estructura visual de Django.
+        Publicaciones gestionadas desde el panel administrativo de Django y servidas dinámicamente con ORM.
     </p>
 </section>
 
 <section class="grid">
+    {% for post in posts %}
     <div class="card">
         <div class="card-icon">📝</div>
-        <h3 class="card-title">Transformando tu Proyecto Django en un Sitio Real</h3>
+        <h3 class="card-title">{{ post.titulo }}</h3>
+        <p class="card-body">{{ post.contenido }}</p>
+        <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-muted);">
+            <span>👤 {{ post.autor }}</span>
+            <span>📅 {{ post.fecha_creacion|date:"d/m/Y" }}</span>
+            <span class="badge" style="font-size: 0.75rem;">{{ post.get_estado_display }}</span>
+        </div>
+    </div>
+    {% empty %}
+    <div class="card" style="grid-column: 1 / -1; text-align: center;">
+        <div class="card-icon">📭</div>
+        <h3 class="card-title">No hay publicaciones disponibles</h3>
         <p class="card-body">
-            En esta Preentrega 8 implementamos el flujo completo: Ruta -> Vista -> Template -> Estático. Dejamos atrás las respuestas simples para dar paso a una interfaz con estilo y herencia de plantillas.
+            Todavía no hay posts publicados. Ingresá al <a href="/admin/" style="color: var(--accent);">panel de administración</a> para crear y publicar contenido.
         </p>
     </div>
-    <div class="card">
-        <div class="card-icon">🐍</div>
-        <h3 class="card-title">De Consola Interactivas a Aplicaciones Web</h3>
-        <p class="card-body">
-            El sistema original por consola evoluciona hacia una arquitectura MVT limpia, mantenible y escalable con Python y Django.
-        </p>
-    </div>
+    {% endfor %}
 </section>
 {% endblock %}
