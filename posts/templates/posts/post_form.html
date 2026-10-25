@@ -1,0 +1,136 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<section class="form-page">
+
+    <!-- Header -->
+    <div class="form-header">
+        <span class="badge">{{ accion }}</span>
+        <h1 class="form-title">{{ titulo_formulario }}</h1>
+        <p class="form-subtitle">
+            {% if post %}
+                Modificá los campos que desees actualizar y guardá los cambios.
+            {% else %}
+                Completá todos los campos para publicar un nuevo artículo en el blog.
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Formulario -->
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data" id="post-form" novalidate>
+            {% csrf_token %}
+
+            <!-- Errores globales -->
+            {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                <p class="error-text">⚠️ {{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Campo Título -->
+            <div class="form-group">
+                <label for="id_titulo" class="form-label">{{ form.titulo.label }} <span class="required">*</span></label>
+                {{ form.titulo }}
+                {% if form.titulo.errors %}
+                <span class="field-error">{{ form.titulo.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Campo Autor -->
+            <div class="form-group">
+                <label for="id_autor" class="form-label">{{ form.autor.label }} <span class="required">*</span></label>
+                {{ form.autor }}
+                {% if form.autor.errors %}
+                <span class="field-error">{{ form.autor.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Campo Estado -->
+            <div class="form-group">
+                <label for="id_estado" class="form-label">{{ form.estado.label }}</label>
+                {{ form.estado }}
+                {% if form.estado.errors %}
+                <span class="field-error">{{ form.estado.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Campo Imagen -->
+            <div class="form-group">
+                <label for="id_imagen" class="form-label">{{ form.imagen.label }}</label>
+                {% if post and post.imagen %}
+                <div class="current-image">
+                    <p class="current-image-label">📷 Imagen actual:</p>
+                    <img src="{{ post.imagen.url }}" alt="Imagen actual" class="preview-img" id="preview-current">
+                </div>
+                {% endif %}
+                {{ form.imagen }}
+                {% if form.imagen.help_text %}
+                <small class="help-text">{{ form.imagen.help_text }}</small>
+                {% endif %}
+                {% if form.imagen.errors %}
+                <span class="field-error">{{ form.imagen.errors.0 }}</span>
+                {% endif %}
+                <!-- Preview de imagen nueva -->
+                <div id="image-preview-container" class="image-preview-container" style="display:none;">
+                    <p class="current-image-label">🖼️ Vista previa:</p>
+                    <img id="image-preview" src="" alt="Vista previa" class="preview-img">
+                </div>
+            </div>
+
+            <!-- Campo Contenido -->
+            <div class="form-group">
+                <label for="id_contenido" class="form-label">{{ form.contenido.label }} <span class="required">*</span></label>
+                {{ form.contenido }}
+                {% if form.contenido.errors %}
+                <span class="field-error">{{ form.contenido.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Botones -->
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary" id="btn-submit-form">
+                    💾 {{ accion }}
+                </button>
+                {% if post %}
+                <a href="{% url 'posts:detalle_post' slug=post.slug %}" class="btn btn-secondary">Cancelar</a>
+                {% else %}
+                <a href="{% url 'posts:lista_posts' %}" class="btn btn-secondary">Cancelar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+// Preview de imagen al seleccionar archivo
+document.getElementById('id_imagen').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const container = document.getElementById('image-preview-container');
+    const preview = document.getElementById('image-preview');
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            preview.src = evt.target.result;
+            container.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        container.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

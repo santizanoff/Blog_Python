@@ -1,0 +1,52 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}{{ post.titulo }} - Blog Consola{% endblock %}
+
+{% block content %}
+<article class="post-detail">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="{% url 'posts:lista_posts' %}" class="breadcrumb-link">← Volver a publicaciones</a>
+    </nav>
+
+    <!-- Header del Post -->
+    <header class="post-detail-header">
+        <div class="post-meta-top">
+            <span class="badge">{{ post.get_estado_display }}</span>
+            <span class="post-date">📅 {{ post.fecha_creacion|date:"d \d\e F \d\e Y" }}</span>
+        </div>
+        <h1 class="post-detail-title">{{ post.titulo }}</h1>
+        <div class="post-author-row">
+            <div class="author-avatar">{{ post.autor|first|upper }}</div>
+            <span class="author-name">{{ post.autor }}</span>
+        </div>
+    </header>
+
+    <!-- Imagen destacada -->
+    {% if post.imagen %}
+    <div class="post-featured-image">
+        <img src="{{ post.imagen.url }}" alt="Imagen destacada de {{ post.titulo }}" class="featured-img" id="featured-image-{{ post.id }}">
+    </div>
+    {% endif %}
+
+    <!-- Contenido -->
+    <div class="post-content">
+        {{ post.contenido|linebreaks }}
+    </div>
+
+    <!-- Acciones CRUD -->
+    <div class="post-actions">
+        <a href="{% url 'posts:editar_post' slug=post.slug %}" class="btn btn-primary" id="btn-editar-{{ post.id }}">
+            ✏️ Editar post
+        </a>
+        <a href="{% url 'posts:eliminar_post' slug=post.slug %}" class="btn btn-danger" id="btn-eliminar-{{ post.id }}">
+            🗑️ Eliminar post
+        </a>
+        <a href="{% url 'posts:lista_posts' %}" class="btn btn-secondary">
+            ← Ver todos los posts
+        </a>
+    </div>
+
+</article>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Eliminar: {{ post.titulo }} - Blog Consola{% endblock %}
+
+{% block content %}
+<section class="form-page">
+
+    <div class="form-header">
+        <span class="badge badge-danger">Zona de peligro</span>
+        <h1 class="form-title">¿Eliminar esta publicación?</h1>
+        <p class="form-subtitle">Esta acción es irreversible. El post y su imagen asociada serán eliminados permanentemente.</p>
+    </div>
+
+    <!-- Tarjeta de preview del post a eliminar -->
+    <div class="delete-preview-card">
+        {% if post.imagen %}
+        <div class="delete-preview-image">
+            <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="preview-img" id="delete-preview-img-{{ post.id }}">
+        </div>
+        {% endif %}
+        <div class="delete-preview-info">
+            <h2 class="delete-post-title">{{ post.titulo }}</h2>
+            <div class="delete-meta">
+                <span>👤 {{ post.autor }}</span>
+                <span>📅 {{ post.fecha_creacion|date:"d/m/Y" }}</span>
+                <span class="badge" style="font-size:0.75rem;">{{ post.get_estado_display }}</span>
+            </div>
+            <p class="delete-excerpt">{{ post.contenido|truncatewords:30 }}</p>
+        </div>
+    </div>
+
+    <!-- Formulario de confirmación -->
+    <div class="form-card">
+        <p class="delete-warning">⚠️ ¿Estás seguro de que querés eliminar <strong>"{{ post.titulo }}"</strong>? No podrás recuperarlo.</p>
+        <form method="post" id="delete-form">
+            {% csrf_token %}
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-danger" id="btn-confirm-delete-{{ post.id }}">
+                    🗑️ Sí, eliminar definitivamente
+                </button>
+                <a href="{% url 'posts:detalle_post' slug=post.slug %}" class="btn btn-secondary" id="btn-cancel-delete">
+                    ← Cancelar, volver al post
+                </a>
+            </div>
+        </form>
+    </div>
+
+</section>
+{% endblock %}

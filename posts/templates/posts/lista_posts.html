@@ -7,20 +7,53 @@
     <span class="badge">Publicaciones</span>
     <h1>Artículos del Blog</h1>
     <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0 auto;">
-        Publicaciones gestionadas desde el panel administrativo de Django y servidas dinámicamente con ORM.
+        Publicaciones gestionadas directamente desde el sitio con el CRUD completo de Django.
     </p>
 </section>
 
+<!-- Botón Crear -->
+<div style="text-align:right; margin-bottom: 1.5rem;">
+    <a href="{% url 'posts:crear_post' %}" class="btn btn-primary" id="btn-crear-post">
+        ✍️ Nueva publicación
+    </a>
+</div>
+
+<!-- Messages -->
+{% if messages %}
+<div class="messages-container" style="margin-bottom:1.5rem;">
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <section class="grid">
     {% for post in posts %}
-    <div class="card">
+    <div class="card post-card">
+        {% if post.imagen %}
+        <div class="card-image">
+            <a href="{% url 'posts:detalle_post' slug=post.slug %}">
+                <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="card-img" id="post-img-{{ post.id }}">
+            </a>
+        </div>
+        {% else %}
         <div class="card-icon">📝</div>
-        <h3 class="card-title">{{ post.titulo }}</h3>
-        <p class="card-body">{{ post.contenido }}</p>
+        {% endif %}
+        <h3 class="card-title">
+            <a href="{% url 'posts:detalle_post' slug=post.slug %}" style="color: inherit; text-decoration: none;" id="post-title-link-{{ post.id }}">
+                {{ post.titulo }}
+            </a>
+        </h3>
+        <p class="card-body">{{ post.contenido|truncatewords:20 }}</p>
         <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-muted);">
             <span>👤 {{ post.autor }}</span>
             <span>📅 {{ post.fecha_creacion|date:"d/m/Y" }}</span>
             <span class="badge" style="font-size: 0.75rem;">{{ post.get_estado_display }}</span>
+        </div>
+        <div class="card-actions">
+            <a href="{% url 'posts:detalle_post' slug=post.slug %}" class="btn btn-secondary btn-sm" id="btn-ver-{{ post.id }}">Ver más</a>
+            <a href="{% url 'posts:editar_post' slug=post.slug %}" class="btn btn-outline btn-sm" id="btn-editar-lista-{{ post.id }}">✏️ Editar</a>
+            <a href="{% url 'posts:eliminar_post' slug=post.slug %}" class="btn btn-danger btn-sm" id="btn-eliminar-lista-{{ post.id }}">🗑️</a>
         </div>
     </div>
     {% empty %}
@@ -28,7 +61,8 @@
         <div class="card-icon">📭</div>
         <h3 class="card-title">No hay publicaciones disponibles</h3>
         <p class="card-body">
-            Todavía no hay posts publicados. Ingresá al <a href="/admin/" style="color: var(--accent);">panel de administración</a> para crear y publicar contenido.
+            Todavía no hay posts publicados.
+            <a href="{% url 'posts:crear_post' %}" style="color: var(--accent-color);">¡Creá el primero!</a>
         </p>
     </div>
     {% endfor %}

@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Post
+from .forms import PostForm
 
 
 def inicio(request):
@@ -31,3 +33,71 @@ def lista_posts(request):
         'posts': posts,
     }
     return render(request, 'posts/lista_posts.html', contexto)
+
+
+def detalle_post(request, slug):
+    """Vista para mostrar el detalle de un post individual."""
+    post = get_object_or_404(Post, slug=slug)
+    contexto = {
+        'titulo_pagina': f'{post.titulo} - Blog Consola',
+        'post': post,
+    }
+    return render(request, 'posts/detalle_post.html', contexto)
+
+
+def crear_post(request):
+    """Vista para crear un nuevo post desde el formulario web."""
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            messages.success(request, f'✅ Post "{post.titulo}" creado exitosamente.')
+            return redirect('posts:detalle_post', slug=post.slug)
+    else:
+        form = PostForm()
+
+    contexto = {
+        'titulo_pagina': 'Crear Post - Blog Consola',
+        'form': form,
+        'accion': 'Crear',
+        'titulo_formulario': 'Nueva publicación',
+    }
+    return render(request, 'posts/post_form.html', contexto)
+
+
+def editar_post(request, slug):
+    """Vista para editar un post existente."""
+    post = get_object_or_404(Post, slug=slug)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save()
+            messages.success(request, f'✏️ Post "{post.titulo}" actualizado correctamente.')
+            return redirect('posts:detalle_post', slug=post.slug)
+    else:
+        form = PostForm(instance=post)
+
+    contexto = {
+        'titulo_pagina': f'Editar: {post.titulo} - Blog Consola',
+        'form': form,
+        'post': post,
+        'accion': 'Guardar cambios',
+        'titulo_formulario': f'Editando: {post.titulo}',
+    }
+    return render(request, 'posts/post_form.html', contexto)
+
+
+def eliminar_post(request, slug):
+    """Vista para confirmar y eliminar un post."""
+    post = get_object_or_404(Post, slug=slug)
+    if request.method == 'POST':
+        titulo = post.titulo
+        post.delete()
+        messages.success(request, f'🗑️ Post "{titulo}" eliminado correctamente.')
+        return redirect('posts:lista_posts')
+
+    contexto = {
+        'titulo_pagina': f'Eliminar: {post.titulo} - Blog Consola',
+        'post': post,
+    }
+    return render(request, 'posts/post_confirm_delete.html', contexto)
