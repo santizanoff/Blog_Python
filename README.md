@@ -8,9 +8,9 @@ Proyecto de blog desarrollado con Python y Django, evolucionando desde un protot
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/santizanoff/Pre_Entrega_7_Django.git
-cd Pre_Entrega_7_Django
-# (O si se clonó especificando el nombre de carpeta 'Blog_consola': cd Blog_consola)
+git clone https://github.com/santizanoff/Blog_Python.git
+cd Blog_Python
+# (O si tu carpeta local se llama 'Blog_consola': cd Blog_consola)
 
 # 2. Crear y activar entorno virtual
 python -m venv venv
@@ -122,7 +122,7 @@ python manage.py migrate
 ## 📁 Estructura del proyecto
 
 ```
-Blog_consola / Pre_Entrega_7_Django/
+Blog_Python / Blog_consola/
 │
 ├── manage.py
 ├── requirements.txt
@@ -186,12 +186,12 @@ Blog_consola / Pre_Entrega_7_Django/
 
 ---
 
-## 📈 Historial de módulos
+## 📈 Historial de evolución del proyecto
 
-| Módulo | Tema |
-|--------|------|
-| 7 | Proyecto Django base y app `posts` |
-| 8 | Rutas → Vistas → Templates → Estáticos (MVT) |
-| 9 | Modelo Post, ORM, Panel Admin y Migraciones |
-| 10 | CRUD completo de publicaciones con imágenes multimedia |
-| **11** | **Autenticación, Usuarios, Perfil OneToOne con Avatar y Vistas Protegidas (Preentrega actual)** |
+| Hito / Módulo | Funcionalidades implementadas |
+|---------------|-------------------------------|
+| Base del proyecto | Arquitectura base de Django, configuración del entorno virtual y app `posts` |
+| Vistas y Templates | Rutas, vistas basadas en funciones, plantillas modulares y estilos CSS (MVT) |
+| Modelo y Base de Datos | Modelo `Post`, ORM, migraciones SQLite y Panel de Administración |
+| CRUD y Multimedia | CRUD completo de publicaciones y carga de imágenes destacadas con Pillow |
+| **Preentrega 11 (Actual)** | **Sistema de autenticación, registro de usuarios, modelo `Perfil` (OneToOne) con biografía y avatar, vistas protegidas con `@login_required` y navegación condicional** |
