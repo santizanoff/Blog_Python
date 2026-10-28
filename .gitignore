@@ -1,5 +1,22 @@
+# Entorno virtual
 venv/
-__pycache__/
-*.pyc
 .env
+
+# Python / Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos local
 db.sqlite3
+*.sqlite3
+
+# Archivos multimedia subidos por usuarios
+media/
+
+# IDE y sistema operativo
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store

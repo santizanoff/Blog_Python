@@ -8,13 +8,19 @@ Proyecto de blog desarrollado con Python y Django, evolucionando desde un protot
 
 ```bash
 # 1. Clonar el repositorio
-git clone <URL_DEL_REPO>
-cd Blog_consola
+git clone https://github.com/santizanoff/Pre_Entrega_7_Django.git
+cd Pre_Entrega_7_Django
+# (O si se clonó especificando el nombre de carpeta 'Blog_consola': cd Blog_consola)
 
 # 2. Crear y activar entorno virtual
 python -m venv venv
-# Windows:
-venv\Scripts\activate
+
+# En Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# En Windows (CMD):
+venv\Scripts\activate.bat
+# En macOS / Linux:
+source venv/bin/activate
 
 # 3. Instalar dependencias
 pip install -r requirements.txt
@@ -29,7 +35,15 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Luego visitá [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+### 🌐 Rutas de arranque en el navegador
+
+Con el servidor corriendo, podés acceder a las rutas clave de la aplicación:
+
+- **🏠 Inicio / Portada**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/) - Página principal con acceso directo a todas las secciones.
+- **📰 Publicaciones (CRUD)**: [http://127.0.0.1:8000/posts/](http://127.0.0.1:8000/posts/) - Listado de posts publicados con enlaces a ver, editar y eliminar.
+- **✍️ Crear Publicación**: [http://127.0.0.1:8000/posts/crear/](http://127.0.0.1:8000/posts/crear/) - Formulario con subida de imágenes destacadas.
+- **ℹ️ Acerca de**: [http://127.0.0.1:8000/acerca/](http://127.0.0.1:8000/acerca/) - Información sobre el autor y el propósito del blog.
+- **⚙️ Panel Admin**: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) - Panel administrativo nativo de Django.
 
 ---
 
