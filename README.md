@@ -4,6 +4,15 @@ Proyecto de blog desarrollado con Python y Django, evolucionando desde un protot
 
 ---
 
+## 📋 Requisitos Previos
+
+- **Python**: Versión `3.14.x` (o versiones recomendadas `>= 3.10` / `3.12+` compatibles con Django 6.x).
+  > **Nota**: El proyecto fue probado y desarrollado bajo **Python 3.14.7**. Se recomienda utilizar dicha versión o una superior compatible para evitar inconvenientes de dependencias.
+- **pip**: Gestor de paquetes de Python (incluido con la instalación de Python).
+- **Entorno virtual**: Módulo `venv` (incluido en la biblioteca estándar).
+
+---
+
 ## Cómo ejecutar el proyecto
 
 ```bash
@@ -12,7 +21,7 @@ git clone https://github.com/santizanoff/Blog_Python.git
 cd Blog_Python
 # (O si tu carpeta local se llama 'Blog_consola': cd Blog_consola)
 
-# 2. Crear y activar entorno virtual
+# 2. Crear y activar entorno virtual (con Python 3.14)
 python -m venv venv
 
 # En Windows (PowerShell):
