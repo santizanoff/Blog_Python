@@ -1,0 +1,59 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Iniciar Sesión - Blog Consola{% endblock %}
+
+{% block content %}
+<section class="form-container">
+    <div class="form-card auth-card">
+        <header class="form-header">
+            <span class="badge">Acceso de Usuarios</span>
+            <h1 class="form-title">🔐 Iniciar Sesión</h1>
+            <p class="form-subtitle">
+                Ingresá tus credenciales para acceder a la creación, edición de posts y a tu perfil.
+            </p>
+        </header>
+
+        <form method="post" action="{% url 'accounts:login' %}" novalidate class="custom-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                <p class="error-text">⚠️ {{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username" class="form-label">Nombre de usuario <span class="required">*</span></label>
+                <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="form-control" placeholder="Tu usuario">
+                {% if form.username.errors %}
+                <span class="field-error">{{ form.username.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password" class="form-label">Contraseña <span class="required">*</span></label>
+                <input type="password" name="password" autocomplete="current-password" required id="id_password" class="form-control" placeholder="••••••••">
+                {% if form.password.errors %}
+                <span class="field-error">{{ form.password.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary btn-block" id="btn-login-submit">
+                    🚀 Entrar al Blog
+                </button>
+            </div>
+        </form>
+
+        <footer class="auth-card-footer">
+            <p>¿No tenés cuenta todavía? <a href="{% url 'accounts:registro' %}" class="auth-link">Registrate acá</a></p>
+        </footer>
+    </div>
+</section>
+{% endblock %}

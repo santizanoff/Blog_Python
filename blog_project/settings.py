@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # Aplicaciones propias
     'posts.apps.PostsConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,9 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Autenticación y Redirecciones
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'posts:lista_posts'
+LOGOUT_REDIRECT_URL = 'posts:lista_posts'
+

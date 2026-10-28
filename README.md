@@ -1,6 +1,6 @@
 # Blog Consola - Django Blog
 
-Proyecto de blog desarrollado con Python y Django, evolucionando desde un prototipo en consola hasta una aplicación web completa con CRUD, imágenes y administración de contenido.
+Proyecto de blog desarrollado con Python y Django, evolucionando desde un prototipo en consola hasta una aplicación web completa con CRUD, manejo de imágenes multimedia, sistema de autenticación de usuarios, perfiles personalizados con avatar y protección de vistas.
 
 ---
 
@@ -25,7 +25,8 @@ source venv/bin/activate
 # 3. Instalar dependencias
 pip install -r requirements.txt
 
-# 4. Aplicar migraciones
+# 4. Crear y aplicar migraciones
+python manage.py makemigrations
 python manage.py migrate
 
 # 5. Crear superusuario (opcional, para el panel admin)
@@ -35,126 +36,162 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### 🌐 Rutas de arranque en el navegador
+---
 
-Con el servidor corriendo, podés acceder a las rutas clave de la aplicación:
+## 🌐 Rutas del sitio y mapa de URLs
 
-- **🏠 Inicio / Portada**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/) - Página principal con acceso directo a todas las secciones.
-- **📰 Publicaciones (CRUD)**: [http://127.0.0.1:8000/posts/](http://127.0.0.1:8000/posts/) - Listado de posts publicados con enlaces a ver, editar y eliminar.
-- **✍️ Crear Publicación**: [http://127.0.0.1:8000/posts/crear/](http://127.0.0.1:8000/posts/crear/) - Formulario con subida de imágenes destacadas.
-- **ℹ️ Acerca de**: [http://127.0.0.1:8000/acerca/](http://127.0.0.1:8000/acerca/) - Información sobre el autor y el propósito del blog.
-- **⚙️ Panel Admin**: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) - Panel administrativo nativo de Django.
+Con el servidor corriendo (`http://127.0.0.1:8000/`), podés acceder a las siguientes secciones:
+
+### Vistas Públicas (Acceso libre)
+- **🏠 Inicio / Portada**: [`/`](http://127.0.0.1:8000/) - Presentación del blog y accesos principales.
+- **📰 Publicaciones**: [`/posts/`](http://127.0.0.1:8000/posts/) - Listado de posts publicados con enlace a ver detalle.
+- **📖 Detalle de Post**: [`/posts/<slug>/`](http://127.0.0.1:8000/posts/primer-post/) - Lectura completa del artículo e imagen destacada.
+- **ℹ️ Acerca de**: [`/acerca/`](http://127.0.0.1:8000/acerca/) - Información sobre el autor y el propósito del sitio.
+- **🔐 Iniciar Sesión**: [`/accounts/login/`](http://127.0.0.1:8000/accounts/login/) (o acceso directo [`/login/`](http://127.0.0.1:8000/login/)).
+- **✍️ Registrarse**: [`/accounts/registro/`](http://127.0.0.1:8000/accounts/registro/).
+
+### Vistas Protegidas (Requieren autenticación - `@login_required`)
+Si un usuario anónimo intenta acceder directamente por URL a cualquiera de estas vistas, Django lo redirige de forma automática a la pantalla de login:
+- **✍️ Crear Post**: [`/posts/crear/`](http://127.0.0.1:8000/posts/crear/) (también disponible mediante el alias [`/post/nuevo/`](http://127.0.0.1:8000/post/nuevo/)).
+- **✏️ Editar Post**: `/posts/<slug>/editar/` - Modificación de título, autor, estado, imagen y contenido.
+- **🗑️ Eliminar Post**: `/posts/<slug>/eliminar/` - Pantalla de confirmación y eliminación física.
+- **👤 Mi Perfil**: [`/accounts/perfil/`](http://127.0.0.1:8000/accounts/perfil/) - Visualización de datos de autor, avatar, biografía y sitio web.
+- **⚙️ Editar Perfil & Avatar**: [`/accounts/perfil/editar/`](http://127.0.0.1:8000/accounts/perfil/editar/) - Edición de datos personales, biografía y subida de avatar.
+- **🔑 Cambiar Contraseña**: [`/accounts/password-change/`](http://127.0.0.1:8000/accounts/password-change/) - Cambio de contraseña seguro.
+- **🚪 Cerrar Sesión**: [`/accounts/logout/`](http://127.0.0.1:8000/accounts/logout/) (o acceso directo [`/logout/`](http://127.0.0.1:8000/logout/)).
 
 ---
 
-## Operaciones CRUD disponibles
+## 👥 Sistema de Autenticación, Usuarios y Perfil (Preentrega 11)
 
-El sistema CRUD permite gestionar publicaciones directamente desde el sitio web, sin necesidad del panel de administración.
+### 1. Registro de Usuarios
+- Implementado a través del formulario `RegistroUsuarioForm` basado en `UserCreationForm`.
+- Solicita `username`, `first_name`, `last_name`, `email` y contraseña con confirmación y validaciones de seguridad de Django.
+- Al enviar el formulario, el usuario se crea y automáticamente se inicializa su `Perfil` mediante una señal (`post_save` signal). Luego se inicia su sesión inmediatamente para una experiencia de usuario fluida.
 
-| Operación | URL | Descripción |
-|-----------|-----|-------------|
-| **Listar** | `/posts/` | Lista todos los posts publicados |
-| **Detalle** | `/posts/<slug>/` | Ver el detalle completo de un post |
-| **Crear** | `/posts/crear/` | Formulario para nueva publicación |
-| **Editar** | `/posts/<slug>/editar/` | Formulario para editar un post existente |
-| **Eliminar** | `/posts/<slug>/eliminar/` | Confirmar y eliminar un post |
+### 2. Login y Logout
+- **Login**: Utiliza la vista `CustomLoginView` extendida de `LoginView` de `django.contrib.auth.views`, con soporte para redirección automática tras iniciar sesión (`LOGIN_REDIRECT_URL = 'posts:lista_posts'`) y preservación del parámetro `?next=` para volver a la página solicitada previamente.
+- **Logout**: Utiliza `cerrar_sesion` que permite cerrar sesión tanto por petición POST como GET, enviando un mensaje informativo y redirigiendo a la lista de publicaciones (`LOGOUT_REDIRECT_URL`).
 
----
-
-## Configuración del manejo de imágenes
-
-Se utilizan los ajustes `MEDIA_URL` y `MEDIA_ROOT` en `blog_project/settings.py`:
+### 3. Modelo `Perfil` (OneToOne con `User`)
+Para extender la información de cada autor sin alterar el modelo nativo `User`, se diseñó el modelo `Perfil` en la app `accounts`:
 
 ```python
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+class Perfil(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    biografia = models.TextField(blank=True, verbose_name="Biografía")
+    avatar = models.ImageField(upload_to='avatares/', blank=True, null=True, verbose_name="Avatar")
+    link_web = models.URLField(max_length=255, blank=True, null=True, verbose_name="Sitio Web")
 ```
 
-Las imágenes subidas por usuarios se almacenan en `media/posts/`.
+- **Creación automática**: Mediante señales en `accounts/signals.py`, cada vez que se crea un usuario en el sistema (por registro web, admin o `createsuperuser`), se crea automáticamente su respectivo `Perfil`.
+- **Compatibilidad**: Se define el alias `Profile = Perfil` para garantizar compatibilidad total con cualquier entorno o evaluación.
+- **Administración**: Registrado en `accounts/admin.py` tanto de forma independiente como inline (`PerfilInline`) dentro del panel de `UserAdmin`.
 
-En `blog_project/urls.py` se sirven los archivos media durante el desarrollo con:
+### 4. Configuración de Avatares y Archivos Multimedia
+- Los avatares subidos se guardan en la carpeta `media/avatares/`.
+- El proyecto tiene configurado en `blog_project/settings.py`:
+  ```python
+  MEDIA_URL = '/media/'
+  MEDIA_ROOT = BASE_DIR / 'media'
+  ```
+- En `blog_project/urls.py` se sirven estáticamente los archivos en entorno de desarrollo.
+- En los formularios de perfil se utiliza `enctype="multipart/form-data"` y la vista procesa `request.FILES` junto a una previsualización interactiva en JavaScript.
 
-```python
-from django.conf import settings
-from django.conf.urls.static import static
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-```
+### 5. Navegación Dinámica Condicional
+La barra de navegación (`posts/templates/posts/base.html`) se adapta en tiempo real:
+- **Usuario Invitado (Anónimo)**: Ve enlaces a Inicio, Publicaciones, Acerca de, **Iniciar Sesión** y **Registrarse**.
+- **Usuario Autenticado**: Ve enlace a **✍️ Nuevo Post**, un badge con su **avatar e indicación "Hola, {username}"**, acceso directo a **Mi Perfil** y botón para **Cerrar Sesión**.
 
 ---
 
-## Nueva dependencia instalada: Pillow
+## 🛠️ Ejecución de Migraciones
 
-`Pillow` es la librería de procesamiento de imágenes requerida por Django para usar `ImageField`.
+Para aplicar los cambios del modelo `Perfil` y la base de datos:
 
 ```bash
-pip install Pillow
-```
+# Detectar modelos nuevos y cambios en apps
+python manage.py makemigrations
 
-Incluida en `requirements.txt`.
+# Aplicar las migraciones a la base de datos SQLite
+python manage.py migrate
+```
 
 ---
 
-## Cómo probar la carga de imágenes
-
-1. Ir a [http://127.0.0.1:8000/posts/crear/](http://127.0.0.1:8000/posts/crear/)
-2. Completar el formulario: título, autor, contenido, estado
-3. En el campo **"Imagen destacada"**, seleccionar una imagen local (JPG, PNG, WebP)
-4. Hacer clic en **"Crear"**
-5. La imagen se guarda en `media/posts/` y se muestra en la vista de detalle
-6. Para editar la imagen, ir a `/posts/<slug>/editar/` y seleccionar una nueva imagen
-
-> **Nota**: El atributo `enctype="multipart/form-data"` en el formulario es crítico para que la imagen llegue al servidor.
-
----
-
-## Estructura del proyecto
+## 📁 Estructura del proyecto
 
 ```
-Blog_consola/
+Blog_consola / Pre_Entrega_7_Django/
 │
 ├── manage.py
-├── README.md
 ├── requirements.txt
+├── README.md
+├── .gitignore
 │
 ├── blog_project/
-│   ├── settings.py       # MEDIA_URL, MEDIA_ROOT
-│   └── urls.py           # static() para media en dev
+│   ├── __init__.py
+│   ├── settings.py           # MEDIA_URL, MEDIA_ROOT, LOGIN_URL, LOGIN_REDIRECT_URL
+│   ├── urls.py               # Enrutador principal, static(MEDIA) y rutas de accounts
+│   ├── asgi.py
+│   └── wsgi.py
 │
 ├── media/
-│   └── posts/            # Imágenes subidas por usuarios
+│   ├── posts/                # Imágenes de publicaciones
+│   └── avatares/             # Avatares de perfiles de usuario
 │
-└── posts/
-    ├── admin.py
-    ├── forms.py          # PostForm (ModelForm)
-    ├── models.py         # Post con ImageField y slug
-    ├── urls.py           # Rutas CRUD
-    ├── views.py          # Vistas CRUD
+├── posts/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py              # PostForm (ModelForm)
+│   ├── models.py             # Post con ImageField y slug
+│   ├── urls.py               # Rutas CRUD y alias /post/nuevo/
+│   ├── views.py              # Vistas protegidas con @login_required
+│   ├── tests.py
+│   ├── migrations/
+│   │   ├── 0001_initial.py
+│   │   └── 0002_post_imagen_post_slug.py
+│   │
+│   ├── templates/posts/
+│   │   ├── base.html         # Template base con navbar condicional y mensajes
+│   │   ├── inicio.html
+│   │   ├── acerca.html
+│   │   ├── lista_posts.html
+│   │   ├── detalle_post.html
+│   │   ├── post_form.html
+│   │   └── post_confirm_delete.html
+│   │
+│   └── static/posts/css/
+│       └── estilos.css       # Estilos completos en CSS moderno (dark glassmorphism)
+│
+└── accounts/
+    ├── admin.py              # PerfilAdmin y PerfilInline
+    ├── apps.py               # AccountsConfig con carga de signals
+    ├── forms.py              # RegistroUsuarioForm, UserEditForm, PerfilForm
+    ├── models.py             # Modelo Perfil con OneToOneField a User
+    ├── signals.py            # Signal post_save para creación automática de Perfil
+    ├── urls.py               # Rutas de login, logout, registro, perfil y password
+    ├── views.py              # Vistas de autenticación y gestión de perfil
+    ├── tests.py              # Tests unitarios automatizados
+    ├── migrations/
+    │   └── 0001_initial.py   # Migración inicial del modelo Perfil
     │
-    ├── templates/
-    │   └── posts/
-    │       ├── base.html
-    │       ├── inicio.html
-    │       ├── acerca.html
-    │       ├── lista_posts.html
-    │       ├── detalle_post.html
-    │       ├── post_form.html
-    │       └── post_confirm_delete.html
-    │
-    └── static/
-        └── posts/
-            └── css/
-                └── estilos.css
+    └── templates/accounts/
+        ├── login.html        # Formulario de inicio de sesión
+        ├── registro.html     # Formulario de registro con validaciones
+        ├── perfil.html       # Vista detallada de perfil de autor y avatar
+        ├── editar_perfil.html# Formulario con carga de avatar y request.FILES
+        └── password_change.html # Cambio seguro de clave
 ```
 
 ---
 
-## Historial de módulos
+## 📈 Historial de módulos
 
 | Módulo | Tema |
 |--------|------|
-| 7 | Proyecto Django base |
-| 8 | Rutas → Vistas → Templates → Estáticos |
-| 9 | Modelo Post, ORM, Panel Admin |
-| **10** | **CRUD completo + imágenes (Preentrega actual)** |
+| 7 | Proyecto Django base y app `posts` |
+| 8 | Rutas → Vistas → Templates → Estáticos (MVT) |
+| 9 | Modelo Post, ORM, Panel Admin y Migraciones |
+| 10 | CRUD completo de publicaciones con imágenes multimedia |
+| **11** | **Autenticación, Usuarios, Perfil OneToOne con Avatar y Vistas Protegidas (Preentrega actual)** |

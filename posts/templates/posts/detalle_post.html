@@ -37,12 +37,14 @@
 
     <!-- Acciones CRUD -->
     <div class="post-actions">
+        {% if user.is_authenticated %}
         <a href="{% url 'posts:editar_post' slug=post.slug %}" class="btn btn-primary" id="btn-editar-{{ post.id }}">
             ✏️ Editar post
         </a>
         <a href="{% url 'posts:eliminar_post' slug=post.slug %}" class="btn btn-danger" id="btn-eliminar-{{ post.id }}">
             🗑️ Eliminar post
         </a>
+        {% endif %}
         <a href="{% url 'posts:lista_posts' %}" class="btn btn-secondary">
             ← Ver todos los posts
         </a>

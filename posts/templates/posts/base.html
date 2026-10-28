@@ -19,8 +19,25 @@
                 <ul class="nav-menu">
                     <li><a href="{% url 'posts:inicio' %}" class="nav-link">Inicio</a></li>
                     <li><a href="{% url 'posts:lista_posts' %}" class="nav-link">Publicaciones</a></li>
-                    <li><a href="{% url 'posts:crear_post' %}" class="nav-link nav-link-cta">✍️ Nuevo Post</a></li>
                     <li><a href="{% url 'posts:acerca' %}" class="nav-link">Acerca de</a></li>
+
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'posts:crear_post' %}" class="nav-link nav-link-cta">✍️ Nuevo Post</a></li>
+                        <li class="nav-user-item">
+                            <a href="{% url 'accounts:perfil' %}" class="nav-link nav-user-profile" title="Ver mi perfil">
+                                {% if user.perfil.avatar %}
+                                    <img src="{{ user.perfil.avatar.url }}" alt="{{ user.username }}" class="nav-avatar">
+                                {% else %}
+                                    <span class="nav-avatar-placeholder">{{ user.username|make_list|first|upper }}</span>
+                                {% endif %}
+                                <span class="nav-username">Hola, {{ user.username }}</span>
+                            </a>
+                        </li>
+                        <li><a href="{% url 'accounts:logout' %}" class="nav-link nav-link-logout">Cerrar Sesión</a></li>
+                    {% else %}
+                        <li><a href="{% url 'accounts:login' %}" class="nav-link">Iniciar Sesión</a></li>
+                        <li><a href="{% url 'accounts:registro' %}" class="nav-link nav-link-cta">Registrarse</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
@@ -28,6 +45,16 @@
 
     <!-- Contenido Principal -->
     <main class="main-container">
+        {% if messages %}
+        <div class="messages-wrapper">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </main>
@@ -36,7 +63,7 @@
     <footer class="footer">
         <div class="footer-content">
             <p>&copy; 2026 Blog Consola - Desarrollado en Django</p>
-            <p class="tag">Preentrega 10 | CRUD & Media Files</p>
+            <p class="tag">Preentrega 11 | Autenticación, Usuarios & Perfil</p>
         </div>
     </footer>
 </body>

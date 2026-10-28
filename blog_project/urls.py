@@ -19,8 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from accounts import views as account_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
+    # Accesos directos a nivel raíz para login y logout
+    path('login/', account_views.CustomLoginView.as_view(), name='login'),
+    path('logout/', account_views.cerrar_sesion, name='logout'),
     path('', include('posts.urls')),
 ]
 

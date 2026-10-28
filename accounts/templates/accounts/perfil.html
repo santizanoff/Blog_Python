@@ -1,0 +1,72 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}{{ titulo_pagina|default:"Mi Perfil - Blog Consola" }}{% endblock %}
+
+{% block content %}
+<section class="profile-container">
+    <div class="profile-card">
+        
+        <!-- Header del perfil con Avatar -->
+        <div class="profile-header">
+            <div class="profile-avatar-wrapper">
+                {% if perfil.avatar %}
+                    <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ perfil.user.username }}" class="profile-avatar-img" id="user-profile-avatar">
+                {% else %}
+                    <div class="profile-avatar-placeholder" id="user-profile-placeholder">
+                        {{ perfil.user.username|make_list|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="profile-main-info">
+                <span class="badge">Autor del Blog</span>
+                <h1 class="profile-username">{{ perfil.user.username }}</h1>
+                {% if perfil.user.get_full_name %}
+                    <p class="profile-fullname">{{ perfil.user.get_full_name }}</p>
+                {% endif %}
+                <p class="profile-email">✉️ {{ perfil.user.email|default:"Sin email registrado" }}</p>
+                <p class="profile-date">📅 Miembro desde: {{ perfil.user.date_joined|date:"d \d\e F \d\e Y" }}</p>
+            </div>
+        </div>
+
+        <hr class="profile-divider">
+
+        <!-- Biografía e Información Adicional -->
+        <div class="profile-section">
+            <h3 class="profile-section-title">📝 Biografía</h3>
+            {% if perfil.biografia %}
+                <p class="profile-bio">{{ perfil.biografia|linebreaks }}</p>
+            {% else %}
+                <p class="profile-bio-empty">
+                    <em>Aún no has configurado tu biografía. ¡Personalizá tu perfil para que otros lectores conozcan tu trayectoria!</em>
+                </p>
+            {% endif %}
+        </div>
+
+        {% if perfil.link_web %}
+        <div class="profile-section">
+            <h3 class="profile-section-title">🌐 Sitio Web / Red Social</h3>
+            <p>
+                <a href="{{ perfil.link_web }}" target="_blank" rel="noopener noreferrer" class="profile-web-link">
+                    🔗 {{ perfil.link_web }}
+                </a>
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Acciones del Perfil -->
+        <div class="profile-actions">
+            <a href="{% url 'accounts:editar_perfil' %}" class="btn btn-primary" id="btn-editar-perfil">
+                ✏️ Editar Perfil & Avatar
+            </a>
+            <a href="{% url 'accounts:password_change' %}" class="btn btn-secondary" id="btn-cambiar-pass">
+                🔑 Cambiar Contraseña
+            </a>
+            <a href="{% url 'posts:crear_post' %}" class="btn btn-outline" id="btn-nuevo-post">
+                ✍️ Crear Nueva Publicación
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
