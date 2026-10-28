@@ -28,6 +28,10 @@ def acerca(request):
 def lista_posts(request):
     """Vista para mostrar publicaciones publicadas del blog desde la base de datos."""
     posts = Post.objects.filter(estado='publicado').order_by('-fecha_creacion')
+    # Garantizar que ningún post antiguo tenga slug vacío para evitar NoReverseMatch
+    for p in posts:
+        if not p.slug:
+            p.save()
     contexto = {
         'titulo_pagina': 'Publicaciones - Blog Consola',
         'posts': posts,
