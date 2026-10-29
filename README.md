@@ -1,6 +1,6 @@
 # 📝 Blog Consola — Blog Web con Django
 
-Aplicación web de blog construida con Python y Django, desarrollada como proyecto integrador del curso. Evolucionó desde un prototipo en consola hasta una aplicación web completa con sistema de publicaciones, imágenes, autenticación de usuarios, perfiles y panel de administración.
+Aplicación web de blog construida con Python y Django, desarrollada como proyecto integrador y final del curso de Introducción al Desarrollo Web con Python y Django. Evolucionó desde un prototipo en consola hasta una aplicación web completa con sistema de publicaciones, imágenes, autenticación de usuarios, perfiles y panel de administración.
 
 ---
 
