@@ -207,4 +207,5 @@ La carpeta `media/` se crea automáticamente cuando subís imágenes desde la in
 
 **Santiago Zanoff**
 - GitHub: [@santizanoff](https://github.com/santizanoff)
-- Proyecto desarrollado como entrega final del curso de Python y Django — 2026
+- Proyecto desarrollado como entrega final del curso de Python y Django — Noviembre 2026
+- Estado del proyecto: ✅ Consolidado, probado (19/19 tests) y listo para entrega final (Noviembre 2026)
